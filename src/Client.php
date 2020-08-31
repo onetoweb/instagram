@@ -40,6 +40,7 @@ class Client
      * 
      * @param int $appId
      * @param string $appSecret
+     * @param string $redirectUri
      */
     public function __construct(int $appId, string $appSecret, string $redirectUri)
     {
