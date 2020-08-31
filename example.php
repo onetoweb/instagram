@@ -20,7 +20,6 @@ if (!isset($_SESSION['token']) and !isset($_GET['code'])) {
     // get authorization code
     printf('<a href="%1$s">%1$s</a>', $client->getAuthorizationLink());
     
-    
 } elseif (!isset($_SESSION['token']) and isset($_GET['code'])) {
     
     // get access token
@@ -42,7 +41,7 @@ if (!isset($_SESSION['token']) and !isset($_GET['code'])) {
 
 
 // get instagram data
-if ($client->getToken() !==  null) {
+if ($client->getToken() !== null) {
     
     // get user data
     $user = $client->getUserData(['id', 'username']);

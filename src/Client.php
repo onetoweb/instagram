@@ -88,10 +88,8 @@ class Client
      * Request access token.
      * 
      * @param string $code
-     * 
-     * @return Token
      */
-    public function requestAccessToken(string $code): Token
+    public function requestAccessToken(string $code): void
     {
         $client = new GuzzleClient();
         $response  = $client->request('POST', 'https://api.instagram.com/oauth/access_token', [
@@ -120,19 +118,19 @@ class Client
         $expires->setTimestamp(time() - $data->expires_in);
         
         $this->token = new Token($data->access_token, $expires);
-        
-        return $this->token;
     }
     
     /**
      * Refresh access token.
      * 
      * @param bool $force = false
+     * 
+     * @throws TokenException if no token has been set
      */
-    public function refreshAccessToken(bool $force = false)
+    public function refreshAccessToken(bool $force = false): void
     {
         if (!$this->token) {
-            throw new TokenException('no token set');
+            throw new TokenException('no token has been set');
         }
         
         if ($force or $this->token->hasExpired()) {
