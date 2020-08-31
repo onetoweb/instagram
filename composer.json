@@ -1,0 +1,21 @@
+{
+    "description": "Onetoweb Instagram Client",
+    "authors": [
+        {
+            "name": "Jonathan van 't Ende",
+            "email": "jvantende@onetoweb.nl"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^6.5"
+    },
+    "require-dev": {
+        "symfony/debug": "^4.4",
+        "symfony/var-dumper": "^4.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Onetoweb\\Instagram\\": "src/"
+        }
+    }
+}
