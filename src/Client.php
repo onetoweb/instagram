@@ -72,15 +72,18 @@ class Client
     /**
      * Get authorization link.
      * 
+     * @param string $state
+     * 
      * @return string
      */
-    public function getAuthorizationLink(): string
+    public function getAuthorizationLink(string $state): string
     {
         return 'https://api.instagram.com/oauth/authorize?' . http_build_query([
             'client_id' => $this->appId,
             'redirect_uri' => $this->redirectUri,
             'scope' => 'user_profile,user_media',
-            'response_type' => 'code'
+            'response_type' => 'code',
+            'state' => $state,
         ]);
     }
     
