@@ -72,11 +72,11 @@ class Client
     /**
      * Get authorization link.
      * 
-     * @param string $state
+     * @param string $state = null
      * 
      * @return string
      */
-    public function getAuthorizationLink(string $state): string
+    public function getAuthorizationLink(?string $state = null): string
     {
         return 'https://api.instagram.com/oauth/authorize?' . http_build_query([
             'client_id' => $this->appId,
@@ -126,31 +126,26 @@ class Client
     /**
      * Refresh access token.
      * 
-     * @param bool $force = false
-     * 
      * @throws TokenException if no token has been set
      */
-    public function refreshAccessToken(bool $force = false): void
+    public function refreshAccessToken(): void
     {
         if (!$this->token) {
             throw new TokenException('no token has been set');
         }
         
-        if ($force or $this->token->hasExpired()) {
-            
-            $client = new GuzzleClient();
-            $response  = $client->request('GET', 'https://graph.instagram.com/refresh_access_token?'.http_build_query([
-                'grant_type' => 'ig_exchange_token',
-                'access_token' => $this->token->getToken(),
-            ]));
-            
-            $data = json_decode($response->getBody()->getContents());
-            
-            $expires = new \DateTime();
-            $expires->setTimestamp(time() - $data->expires_in);
-            
-            $this->token = new Token($data->access_token, $expires);
-        }
+        $client = new GuzzleClient();
+        $response  = $client->request('GET', 'https://graph.instagram.com/refresh_access_token?'.http_build_query([
+            'grant_type' => 'ig_refresh_token',
+            'access_token' => $this->token->getToken(),
+        ]));
+        
+        $data = json_decode($response->getBody()->getContents());
+        
+        $expires = new \DateTime();
+        $expires->setTimestamp(time() - $data->expires_in);
+        
+        $this->token = new Token($data->access_token, $expires);
     }
     
     /**
@@ -160,8 +155,6 @@ class Client
      */
     public function getUserData(array $fields = []): \stdClass
     {
-        $this->refreshAccessToken();
-        
         $client = new GuzzleClient();
         $response  = $client->request('GET', "https://graph.instagram.com/me?".http_build_query([
             'fields' => implode(',', $fields),
@@ -178,8 +171,6 @@ class Client
      */
     public function getUserMedia(array $fields = []): \stdClass
     {
-        $this->refreshAccessToken();
-        
         $client = new GuzzleClient();
         $response  = $client->request('GET', "https://graph.instagram.com/me/media?".http_build_query([
             'fields' => implode(',', $fields),

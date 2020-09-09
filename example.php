@@ -25,7 +25,7 @@ if (!isset($_SESSION['token']) and !isset($_GET['code'])) {
     // get access token
     $client->requestAccessToken($_GET['code']);
     
-    // store token in session
+    // store token
     $token = $client->getToken();
     
     $_SESSION['token']['token'] = $token->getToken();
@@ -33,7 +33,7 @@ if (!isset($_SESSION['token']) and !isset($_GET['code'])) {
     
 } elseif (isset($_SESSION['token'])) {
     
-    // load token from session
+    // load token from storage
     $token = new Token($_SESSION['token']['token'], $_SESSION['token']['expires']);
     
     $client->setToken($token);
@@ -42,6 +42,13 @@ if (!isset($_SESSION['token']) and !isset($_GET['code'])) {
 
 // get instagram data
 if ($client->getToken() !== null) {
+    
+    // refresh access token
+    $client->refreshAccessToken();
+    
+    // update token in storage
+    $_SESSION['token']['token'] = $client->getToken()->getToken();
+    $_SESSION['token']['expires'] = $client->getToken()->getExpires();
     
     // get user data
     $user = $client->getUserData(['id', 'username']);
